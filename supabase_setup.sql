@@ -8,6 +8,7 @@ create table tasks (
   status text not null default 'pending' check (status in ('pending', 'complete')),
   is_recurring boolean not null default false,
   last_reset_date date default current_date,
+  streak_count integer not null default 0,
   created_at timestamptz default now()
 );
 
