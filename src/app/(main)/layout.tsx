@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { CheckSquare, FileText, Calendar, LogOut, Terminal } from 'lucide-react';
+import { CheckSquare, FileText, Calendar, LogOut, Terminal, Mail } from 'lucide-react';
 
 const tabs = [
   { href: '/daily-tasks', label: 'tasks', icon: CheckSquare },
   { href: '/notes', label: 'notes', icon: FileText },
   { href: '/task-date', label: 'logs', icon: Calendar },
+  { href: '/emails', label: 'Google Keep', icon: Mail },
 ];
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {

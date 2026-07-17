@@ -45,3 +45,20 @@ create policy "Users manage own notes" on notes
 
 create policy "Users manage own task_logs" on task_logs
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- emails table
+create table emails (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  title text not null,
+  category text,
+  content text not null,
+  status text not null default 'pending' check (status in ('pending', 'completed')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+alter table emails enable row level security;
+
+create policy "Users manage own emails" on emails
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
