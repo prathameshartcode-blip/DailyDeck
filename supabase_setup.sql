@@ -62,3 +62,20 @@ alter table emails enable row level security;
 
 create policy "Users manage own emails" on emails
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- scheduled_tasks table
+create table scheduled_tasks (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  title text not null,
+  scheduled_date date not null,
+  notes text,
+  type text not null,
+  status text not null default 'pending' check (status in ('pending', 'done')),
+  created_at timestamptz default now()
+);
+
+alter table scheduled_tasks enable row level security;
+
+create policy "Users manage own scheduled tasks" on scheduled_tasks
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
