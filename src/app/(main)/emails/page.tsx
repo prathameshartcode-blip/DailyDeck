@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useEmails, type Email } from '@/lib/hooks/useEmails';
 import { Copy, Plus, Trash2, CopyPlus, Search, CheckCircle2, Circle, Clock, Mail } from 'lucide-react';
+import { ConfirmModal } from '@/components/ConfirmModal';
 
 export default function EmailsPage() {
   const { emails, loading, addEmail, updateEmail, deleteEmail, duplicateEmail } = useEmails();
@@ -12,6 +13,7 @@ export default function EmailsPage() {
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'updated' | 'alpha'>('newest');
   
   const [toast, setToast] = useState<string | null>(null);
+  const [emailToDelete, setEmailToDelete] = useState<string | null>(null);
 
   // New Email Form State
   const [newTitle, setNewTitle] = useState('');
@@ -164,7 +166,7 @@ export default function EmailsPage() {
             key={email.id} 
             email={email} 
             onUpdate={updateEmail} 
-            onDelete={deleteEmail}
+            onDelete={setEmailToDelete}
             onDuplicate={duplicateEmail}
             onCopy={showToast}
           />
@@ -179,6 +181,14 @@ export default function EmailsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={!!emailToDelete}
+        onConfirm={() => {
+          if (emailToDelete) deleteEmail(emailToDelete);
+        }}
+        onCancel={() => setEmailToDelete(null)}
+      />
     </div>
   );
 }

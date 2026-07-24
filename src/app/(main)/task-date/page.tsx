@@ -8,6 +8,7 @@ import { useEmails } from '@/lib/hooks/useEmails';
 
 import Heatmap from '@/components/Heatmap';
 import CategoryCharts from '@/components/CategoryCharts';
+import { ConfirmModal } from '@/components/ConfirmModal';
 
 import { Plus, Trash2, Calendar, Search, Lightbulb, Bug, Users, Sparkles, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 
@@ -30,6 +31,7 @@ export default function TaskDatePage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'complete'>('all');
   const [timeFilter, setTimeFilter] = useState<'today' | 'week' | 'all'>('all');
+  const [logToDelete, setLogToDelete] = useState<string | null>(null);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -361,7 +363,7 @@ export default function TaskDatePage() {
                 {!item.isTask && (
                   <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => deleteLog(item.id)}
+                      onClick={() => setLogToDelete(item.id)}
                       className="p-1 hover:bg-[#1F2329] text-zinc-600 hover:text-red-400 rounded transition-colors"
                       title="Delete event"
                     >
@@ -382,6 +384,14 @@ export default function TaskDatePage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={!!logToDelete}
+        onConfirm={() => {
+          if (logToDelete) deleteLog(logToDelete);
+        }}
+        onCancel={() => setLogToDelete(null)}
+      />
     </div>
   );
 }

@@ -79,3 +79,34 @@ alter table scheduled_tasks enable row level security;
 
 create policy "Users manage own scheduled tasks" on scheduled_tasks
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- email_campaigns table
+create table email_campaigns (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  subject text not null,
+  body text not null,
+  attachment_url text,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed', 'failed')),
+  created_at timestamptz default now()
+);
+
+alter table email_campaigns enable row level security;
+create policy "Users manage own email campaigns" on email_campaigns
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- email_queue table
+create table email_queue (
+  id uuid primary key default gen_random_uuid(),
+  campaign_id uuid references email_campaigns(id) on delete cascade not null,
+  user_id uuid references auth.users not null,
+  recipient_email text not null,
+  status text not null default 'pending' check (status in ('pending', 'sent', 'failed')),
+  error_message text,
+  sent_at timestamptz,
+  created_at timestamptz default now()
+);
+
+alter table email_queue enable row level security;
+create policy "Users manage own email queue" on email_queue
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

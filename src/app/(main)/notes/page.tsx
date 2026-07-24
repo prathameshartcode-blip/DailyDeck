@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useNotes } from '@/lib/hooks/useNotes';
 import { Plus, Trash2, Calendar, Search } from 'lucide-react';
+import { ConfirmModal } from '@/components/ConfirmModal';
 
 export default function NotesPage() {
   const { grouped, loading, addNote, deleteNote } = useNotes();
   const [content, setContent] = useState('');
   const [search, setSearch] = useState('');
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const handleAdd = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -135,7 +137,7 @@ export default function NotesPage() {
                       </span>
                       
                       <button
-                        onClick={() => deleteNote(note.id)}
+                        onClick={() => setNoteToDelete(note.id)}
                         className="p-1 hover:bg-[#1F2329] text-zinc-600 hover:text-red-400 rounded opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Delete note"
                       >
@@ -157,6 +159,14 @@ export default function NotesPage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={!!noteToDelete}
+        onConfirm={() => {
+          if (noteToDelete) deleteNote(noteToDelete);
+        }}
+        onCancel={() => setNoteToDelete(null)}
+      />
     </div>
   );
 }

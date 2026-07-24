@@ -5,6 +5,7 @@ import { useTasks, type Task } from '@/lib/hooks/useTasks';
 import { useNotes } from '@/lib/hooks/useNotes';
 import { useTaskLogs } from '@/lib/hooks/useTaskLogs';
 import { Plus, Trash2, RefreshCw, GripVertical, ChevronDown, ChevronUp, BarChart2 } from 'lucide-react';
+import { ConfirmModal } from '@/components/ConfirmModal';
 
 export default function DailyTasksPage() {
   const { tasks, loading, addTask, toggleStatus, deleteTask } = useTasks();
@@ -190,6 +191,7 @@ function Column({
   actionText: string;
 }) {
   const [isOver, setIsOver] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -277,7 +279,7 @@ function Column({
                   {actionText}
                 </button>
                 <button
-                  onClick={() => onDelete(task.id)}
+                  onClick={() => setTaskToDelete(task.id)}
                   className="p-1 hover:bg-[#15181D] text-zinc-600 hover:text-red-400 rounded transition-colors"
                   title="Delete event"
                 >
@@ -294,6 +296,14 @@ function Column({
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={!!taskToDelete}
+        onConfirm={() => {
+          if (taskToDelete) onDelete(taskToDelete);
+        }}
+        onCancel={() => setTaskToDelete(null)}
+      />
     </div>
   );
 }
